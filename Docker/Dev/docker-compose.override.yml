@@ -1,0 +1,29 @@
+services:
+
+  fot.webapi:
+    ports:
+      - "8084:8080"
+  
+  fot.orderchangedworker:
+    ports:
+      - "8085:8080"
+
+  fot.webapi.postgres:
+    ports:
+      - "5432:5432"
+  
+  fot.kafka:
+    ports:
+      - "9092:9092"
+  
+  fot.proxy:
+    ports:
+      - "80:80"
+  
+  kafka-ui:
+    ports:
+      - "9085:8080"
+
+  fot.client:
+      ports:
+      - "5173:5173"

@@ -1,0 +1,11 @@
+/* Layout helpers for Orders sidebar */
+.filters-sidebar {
+  width: 320px;
+}
+
+@media (max-width: 991.98px) {
+  .filters-sidebar {
+    width: 100%;
+  }
+}
+

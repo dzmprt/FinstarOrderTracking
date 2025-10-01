@@ -1,0 +1,13 @@
+.gitignore
+.npmignore
+api.ts
+base.ts
+common.ts
+configuration.ts
+docs/AppInfoApi.md
+docs/CreateOrderCommand.md
+docs/OrderDto.md
+docs/OrdersApi.md
+docs/UpdateOrderStatusCommand.md
+git_push.sh
+index.ts

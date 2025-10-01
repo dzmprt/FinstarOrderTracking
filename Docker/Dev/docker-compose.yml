@@ -1,0 +1,132 @@
+﻿services:
+
+  fot.webapi:
+    image: fot.webapi
+    build:
+      context: ../../
+      dockerfile: src/Server/FOT.WebApi/Dockerfile
+    depends_on:
+      fot.webapi.postgres:
+        condition: service_healthy
+        restart: true
+    restart: unless-stopped
+
+  fot.webapi.postgres:
+    container_name: fot.webapi.postgres
+    image: postgres:17.5
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=26214"
+      - "-c"
+      - "shared_buffers=1GB"
+      - "-c"
+      - "effective_cache_size=4GB"
+      - "-c"
+      - "work_mem=16MB"
+      - "-c"
+      - "maintenance_work_mem=512MB"
+      - "-c"
+      - "random_page_cost=1.1"
+      - "-c"
+      - "temp_file_limit=2GB"
+      - "-c"
+      - "log_min_duration_statement=200ms"
+      - "-c"
+      - "idle_in_transaction_session_timeout=5min"
+      - "-c"
+      - "lock_timeout=1s"
+      - "-c"
+      - "statement_timeout=60s"
+      - "-c"
+      - "shared_preload_libraries=pg_stat_statements"
+      - "-c"
+      - "pg_stat_statements.max=10000"
+      - "-c"
+      - "pg_stat_statements.track=all"
+    environment:
+      POSTGRES_DB: "fot.webapi"
+      POSTGRES_USER: "FotWebapi"
+      POSTGRES_PASSWORD: "12345678"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ../../AppData/postgresql/data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    
+  fot.proxy:
+    container_name: fot.proxy
+    image: nginx:mainline
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - fot.webapi
+      - fot.webapi.postgres
+    restart: unless-stopped
+
+  fot.kafka:
+    image: apache/kafka:4.1.0
+    container_name: fot.kafka
+    environment:
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@fot.kafka:9093
+      KAFKA_LISTENERS: PLAINTEXT://fot.kafka:9092,CONTROLLER://fot.kafka:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://fot.kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    volumes:
+      - ../../AppData/kafka/kraft-combined-logs:/tmp/kraft-combined-logs
+    restart: unless-stopped
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=fot.kafka:9092
+    depends_on:
+      - fot.kafka
+    restart: unless-stopped
+
+  fot.outboxworker:
+    image: fot.outboxworker
+    build:
+      context: ../../
+      dockerfile: src/Server/Workers/FOT.OutboxWorker/Dockerfile
+    depends_on:
+      fot.webapi.postgres:
+        condition: service_healthy
+        restart: true
+      fot.kafka:
+        condition: service_started
+    restart: unless-stopped
+
+  fot.orderchangedworker:
+    image: fot.orderchangedworker
+    build:
+      context: ../../
+      dockerfile: src/Server/Workers/FOT.OrderChangedWorker/Dockerfile
+    depends_on:
+      fot.kafka:
+        condition: service_started
+    restart: unless-stopped
+
+  fot.client:
+    image: fot.client
+    build:
+      context: ../../src/Client/fot-client
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped

@@ -1,0 +1,11 @@
+export const WEBSOCKET_CONFIG = {
+  RECONNECT_DELAY: 1000,
+  MAX_RECONNECT_ATTEMPTS: 5,
+  MAX_RECONNECT_DELAY: 30000,
+  NOTIFICATION_AUTO_DISMISS_DELAY: 5000,
+} as const;
+
+export const WEBSOCKET_STATUS = {
+  CONNECTED: 'Connected',
+  DISCONNECTED: 'Disconnected',
+} as const;
