@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
-using FOT.Application.Abstractions;
 using FOT.Application.Common;
+using FOT.Application.Common.Abstractions.Infrastructure.Database;
 using FOT.Domain.Orders;
 using MitMediator;
 
@@ -30,7 +30,7 @@ public class GetOrdersByFilterQueryHandler(IBaseProvider<Order> ordersProvider)
              ||
              o.OrderNumber.ToString().Contains(request.FreeText)
             );
-        
+
         Expression<Func<Order, object>> orderSelector = request.OrderBy switch
         {
             GetOrdersOrderByEnum.ByNumber => o => o.OrderNumber,
@@ -49,10 +49,6 @@ public class GetOrdersByFilterQueryHandler(IBaseProvider<Order> ordersProvider)
                 , cancellationToken);
 
         var totalCount = await ordersProvider.CountAsync(filter, cancellationToken);
-        return new ListResult<OrderDto>
-        {
-            Items = orders.Select(o => new OrderDto(o)).ToArray(),
-            TotalCount = totalCount
-        };
+        return new ListResult<OrderDto>(orders.Select(o => new OrderDto(o)).ToArray(), totalCount);
     }
 }

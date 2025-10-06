@@ -1,5 +1,5 @@
 using System.Linq.Expressions;
-using FOT.Application.Abstractions;
+using FOT.Application.Common.Abstractions.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
 namespace FOT.DatabaseInfrastructure.Implementations;

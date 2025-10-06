@@ -11,7 +11,7 @@ namespace FOT.WebApi.Middlewares;
 internal class CustomExceptionsHandlerMiddleware
 {
     private readonly RequestDelegate _next;
-    
+
     /// <summary>
     /// Initializes a new instance of <see cref="CustomExceptionsHandlerMiddleware"/>.
     /// </summary>
@@ -20,8 +20,8 @@ internal class CustomExceptionsHandlerMiddleware
     {
         _next = next;
     }
-    
-    
+
+
     /// <summary>
     /// Invoke handler.
     /// </summary>
@@ -80,7 +80,10 @@ internal class CustomExceptionsHandlerMiddleware
         context.Response.StatusCode = (int)code;
 
         if (result == string.Empty)
+        {
             result = System.Text.Json.JsonSerializer.Serialize(new { error = exception.Message, innerMessage = exception.InnerException?.Message, exception.StackTrace });
+        }
+
         logger.Log(LogLevel.Warning, exception, $"Response error {code}: {exception.Message}");
 
         await context.Response.WriteAsync(result);

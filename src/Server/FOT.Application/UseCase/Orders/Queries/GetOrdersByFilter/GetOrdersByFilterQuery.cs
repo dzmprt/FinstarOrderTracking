@@ -13,7 +13,7 @@ public class GetOrdersByFilterQuery : IRequest<ListResult<OrderDto>>
      /// <summary>
      /// Order statuses.
      /// </summary>
-     public OrderStatusEnum[]? OrderStatuses { get; init; }
+     public OrderStatus[]? OrderStatuses { get; init; }
      
      /// <summary>
      /// Created date from.

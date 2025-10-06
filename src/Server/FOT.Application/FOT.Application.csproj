@@ -14,6 +14,10 @@
     <ItemGroup>
       <PackageReference Include="FluentValidation" Version="12.0.0" />
       <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
+      <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
       <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
       <PackageReference Include="MitMediator" Version="8.0.0" />
     </ItemGroup>
@@ -21,5 +25,14 @@
     <ItemGroup>
       <ProjectReference Include="..\FOT.Domain\FOT.Domain.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <EditorConfigFiles Remove=".editorconfig" />
+    </ItemGroup>
+
+    <PropertyGroup>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <AnalysisLevel>latest</AnalysisLevel>
+    </PropertyGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-using FOT.Application.Abstractions;
+using FOT.Application.Common.Abstractions.Infrastructure.Database;
 using Microsoft.Extensions.Logging;
 using MitMediator;
 

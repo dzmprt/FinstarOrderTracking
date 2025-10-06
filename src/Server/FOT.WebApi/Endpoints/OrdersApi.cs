@@ -16,11 +16,11 @@ namespace FOT.WebApi.Endpoints;
 /// </summary>
 internal static class OrdersApi
 {
-    private const string Tag = "orders";
+    private const string _tag = "orders";
 
-    private const string ApiUrl = "api";
+    private const string _apiUrl = "api";
 
-    private const string Version = "v1";
+    private const string _version = "v1";
 
     /// <summary>
     /// Use Orders APIendpoints.
@@ -31,32 +31,32 @@ internal static class OrdersApi
     {
         #region Queries
 
-        app.MapGet($"{ApiUrl}/{Version}/{Tag}/{{orderNumber}}", GetOrderByIdAsync)
-            .WithTags(Tag)
+        app.MapGet($"{_apiUrl}/{_version}/{_tag}/{{orderNumber}}", GetOrderByIdAsync)
+            .WithTags(_tag)
             .WithDescription("Get order by id.")
-            .WithGroupName(Version)
+            .WithGroupName(_version)
             .Produces<OrderDto>();
 
-        app.MapGet($"{ApiUrl}/{Version}/{Tag}", GetOrdersByFilterAsync)
-            .WithTags(Tag)
+        app.MapGet($"{_apiUrl}/{_version}/{_tag}", GetOrdersByFilterAsync)
+            .WithTags(_tag)
             .WithDescription("Get orders by filter.")
-            .WithGroupName(Version)
+            .WithGroupName(_version)
             .Produces<OrderDto[]>();
 
         #endregion
 
         #region Commands
 
-        app.MapPost($"{ApiUrl}/{Version}/{Tag}", CreateOrderAsync)
-            .WithTags(Tag)
+        app.MapPost($"{_apiUrl}/{_version}/{_tag}", CreateOrderAsync)
+            .WithTags(_tag)
             .WithDescription("Create order.")
-            .WithGroupName(Version)
+            .WithGroupName(_version)
             .Produces<OrderDto>();
 
-        app.MapPatch($"{ApiUrl}/{Version}/{Tag}/{{orderNumber}}/status", UpdateOrderStatusAsync)
-            .WithTags(Tag)
+        app.MapPatch($"{_apiUrl}/{_version}/{_tag}/{{orderNumber}}/status", UpdateOrderStatusAsync)
+            .WithTags(_tag)
             .WithDescription("Update order.")
-            .WithGroupName(Version)
+            .WithGroupName(_version)
             .Produces<OrderDto>();
 
         #endregion
@@ -81,7 +81,7 @@ internal static class OrdersApi
         [FromQuery] int limit,
         [FromQuery] int? offset,
         [FromQuery] string? freeText,
-        [FromQuery] OrderStatusEnum[]? orderStatus,
+        [FromQuery] OrderStatus[]? orderStatus,
         [FromQuery] DateTimeOffset? createdFrom,
         [FromQuery] DateTimeOffset? createdTo,
         [FromQuery] DateTimeOffset? updatedFrom,
@@ -101,18 +101,19 @@ internal static class OrdersApi
             UpdatedTo = updatedTo,
             OrderBy = orderBy
         }, cancellationToken);
-        
+
         httpContextAccessor.HttpContext!.Response.Headers.Append("X-Total-Count", result.TotalCount.ToString());
 
         return Results.Ok(result.Items);
     }
 
-    private static ValueTask<OrderDto> CreateOrderAsync(
+    private static async ValueTask<IResult> CreateOrderAsync(
         [FromServices] IMediator mediator,
         [FromBody] CreateOrderCommand command,
         CancellationToken cancellationToken)
     {
-        return mediator.SendAsync<CreateOrderCommand, OrderDto>(command, cancellationToken);
+        var result = await mediator.SendAsync<CreateOrderCommand, OrderDto>(command, cancellationToken);
+        return Results.Created($"/orders/{result.OrderNumber}", result);
     }
 
     private static ValueTask<OrderDto> UpdateOrderStatusAsync(

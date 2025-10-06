@@ -1,7 +1,10 @@
 using FOT.WebApi.Middlewares;
 
-namespace FOT.WebApi;
+namespace FOT.WebApi.Extensions;
 
+/// <summary>
+/// Extensions of <see cref="IApplicationBuilder"/>.
+/// </summary>
 public static class ApplicationBuilderExtensions
 {
     /// <summary>
@@ -13,13 +16,13 @@ public static class ApplicationBuilderExtensions
     {
         return builder.UseMiddleware<CustomExceptionsHandlerMiddleware>();
     }
-    
+
     /// <summary>
     /// Use configured swagger.
     /// </summary>
     /// <param name="builder"><see cref="IApplicationBuilder"/>.</param>
     /// <returns><see cref="IApplicationBuilder"/>.</returns>
-    public static IApplicationBuilder UseConfiguredSwaggerUI(this IApplicationBuilder builder)
+    public static IApplicationBuilder UseConfiguredSwaggerUi(this IApplicationBuilder builder)
     {
         builder.UseSwagger(c => { c.RouteTemplate = "swagger/{documentname}/swagger.json"; })
             .UseSwaggerUI(options =>

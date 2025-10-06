@@ -1,13 +1,18 @@
-using FOT.Application.Abstractions;
 using FOT.DatabaseInfrastructure;
-using FOT.Domain.Orders;
-using FOT.Domain.Orders.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace FOT.WebApi.Extensions;
 
+/// <summary>
+/// Init database, run pending migrations.
+/// </summary>
 public static class InitDbExtensions
 {
+    /// <summary>
+    /// Init database, run pending migrations.
+    /// </summary>
+    /// <param name="app"></param>
+    /// <returns></returns>
     public static WebApplication UpdateDatabase(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
@@ -24,7 +29,9 @@ public static class InitDbExtensions
             catch (Exception ex)
             {
                 if (migrationAttemptsCount == 10)
+                {
                     throw;
+                }
 
                 var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
                 logger.LogWarning(ex, "Migration attempt failed: {Message}", ex.Message);

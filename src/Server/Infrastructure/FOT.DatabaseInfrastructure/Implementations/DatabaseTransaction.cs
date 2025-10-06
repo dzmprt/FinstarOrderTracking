@@ -1,4 +1,4 @@
-using FOT.Application.Common.Abstractions.Persistence;
+using FOT.Application.Common.Abstractions.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FOT.DatabaseInfrastructure.Implementations;

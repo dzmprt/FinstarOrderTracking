@@ -16,10 +16,10 @@ public sealed class Order : BaseDomain, IAggregateRoot
     /// <summary>
     /// Order status transitions.
     /// </summary>
-    private static readonly Dictionary<OrderStatusEnum, HashSet<OrderStatusEnum>> StatusTransitions = new()
+    private static readonly Dictionary<OrderStatus, HashSet<OrderStatus>> _statusTransitions = new()
     {
-        [OrderStatusEnum.Created] = [OrderStatusEnum.Shipped, OrderStatusEnum.Cancelled],
-        [OrderStatusEnum.Shipped] = [OrderStatusEnum.Delivered, OrderStatusEnum.Cancelled],
+        [OrderStatus.Created] = [OrderStatus.Shipped, OrderStatus.Cancelled],
+        [OrderStatus.Shipped] = [OrderStatus.Delivered, OrderStatus.Cancelled],
     };
 
     /// <summary>
@@ -33,53 +33,57 @@ public sealed class Order : BaseDomain, IAggregateRoot
     public const int MaxDescriptionLength = 1000;
 
     #endregion
-    
+
     /// <summary>
     /// Order number.
     /// </summary>
     public Guid OrderNumber { get; }
-    
+
     /// <summary>
     /// Description.
     /// </summary>
     public string Description { get; }
-    
+
     /// <summary>
     /// Status.
     /// </summary>
-    public OrderStatusEnum Status { get; private set; }
-    
+    public OrderStatus Status { get; private set; }
+
     /// <summary>
     /// Created date.
     /// </summary>
-    public DateTime CreatedAt { get; protected set; }
-    
+    public DateTime CreatedAt { get; private set; }
+
     /// <summary>
     /// Las update date.
     /// </summary>
-    public DateTime? UpdatedAt { get; protected set; }
+    public DateTime? UpdatedAt { get; private set; }
 
     private Order()
     {}
-    
+
     public Order(string description, DateTimeOffset now)
     {
         ArgumentException.ThrowIfNullOrEmpty(description, nameof(description));
         description.ThrowIfLengthOutOfRange(MinDescriptionLength, MaxDescriptionLength);
         Description = description;
-        Status = OrderStatusEnum.Created;
+        Status = OrderStatus.Created;
         CreatedAt = now.UtcDateTime;
     }
 
-    public void ChangeStatus(OrderStatusEnum newStatusEnum, DateTimeOffset now)
+    public void ChangeStatus(OrderStatus newStatus, DateTimeOffset now)
     {
-        if (Status == newStatusEnum)
+        if (Status == newStatus)
+        {
             return;
+        }
 
-        if (!StatusTransitions.TryGetValue(Status, out var allowed) || !allowed.Contains(newStatusEnum))
-            throw new InvalidOperationException($"Unable to change order status from {Status} to {newStatusEnum}");
+        if (!_statusTransitions.TryGetValue(Status, out var allowed) || !allowed.Contains(newStatus))
+        {
+            throw new InvalidOperationException($"Unable to change order status from {Status} to {newStatus}");
+        }
 
-        Status = newStatusEnum;
+        Status = newStatus;
         UpdatedAt = now.UtcDateTime;
         AddDomainEvent(new OrderStatusChangedEvent(this));
     }

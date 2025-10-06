@@ -1,6 +1,6 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
-using FOSDIA.Registration.Api.Utils;
+using FOT.WebApi.SwaggerFilters;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
@@ -8,8 +8,17 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace FOT.WebApi;
 
+/// <summary>
+/// Inject ASP.NET services extensions.
+/// </summary>
 public static class DependencyInjection
 {
+    /// <summary>
+    /// Add ASP.NET services.
+    /// </summary>
+    /// <param name="services"><see cref="IServiceCollection"/>.</param>
+    /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+    /// <returns><see cref="IServiceCollection"/>.</returns>
     public static IServiceCollection AddAspNetServices(this IServiceCollection services, IConfiguration configuration)
     {
         services = services

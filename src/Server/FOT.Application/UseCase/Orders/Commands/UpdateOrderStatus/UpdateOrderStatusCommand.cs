@@ -14,10 +14,13 @@ public struct UpdateOrderStatusCommand : IRequest<OrderDto>
     /// </summary>
     public Guid OrderNumber { get; private set; }
 
-    public void SetOrderNumber(Guid orderNumber) => OrderNumber = orderNumber;
-    
+    public void SetOrderNumber(Guid orderNumber)
+    {
+        OrderNumber = orderNumber;
+    }
+
     /// <summary>
     /// New order status.
     /// </summary>
-    public OrderStatusEnum NewStatus { get; init; }
+    public OrderStatus NewStatus { get; init; }
 }

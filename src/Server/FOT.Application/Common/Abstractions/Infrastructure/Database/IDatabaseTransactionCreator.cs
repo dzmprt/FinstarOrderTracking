@@ -1,4 +1,4 @@
-namespace FOT.Application.Common.Abstractions.Persistence;
+namespace FOT.Application.Common.Abstractions.Infrastructure.Database;
 
 /// <summary>
 /// Database transaction creator.

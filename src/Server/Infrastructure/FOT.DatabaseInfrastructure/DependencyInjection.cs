@@ -1,5 +1,4 @@
-using FOT.Application.Abstractions;
-using FOT.Application.Common.Abstractions.Persistence;
+using FOT.Application.Common.Abstractions.Infrastructure.Database;
 using FOT.DatabaseInfrastructure.Implementations;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;

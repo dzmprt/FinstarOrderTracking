@@ -5,15 +5,15 @@ namespace FOT.OutboxWorker.Infrastructure;
 
 public class PoatrgesqlDomainOutboxRepository(NpgsqlConnection connection)
 {
-    private const string SelectEventsQuery = """
-                                             SELECT "DomainEventOutboxId", "AggregateType", "AggregateId", "EventCode", "Payload", "OccurredAt", "ProcessedAt"  
+    private const string _selectEventsQuery = """
+                                             SELECT "DomainEventOutboxId", "AggregateType", "AggregateId", "EventCode", "Payload", "OccurredAt", "ProcessedAt"
                                              FROM "DomainEventOutboxNotifications"
                                              WHERE "ProcessedAt"  IS NULL
                                              ORDER BY "OccurredAt"
                                              LIMIT @limit
                                              """;
-    
-    private const string UpdateEventsProcessedAtCommand = """
+
+    private const string _updateEventsProcessedAtCommand = """
                                              UPDATE "DomainEventOutboxNotifications"
                                              SET "ProcessedAt" = @ProcessedAt
                                              WHERE "DomainEventOutboxId" IN (@inClause)
@@ -22,7 +22,7 @@ public class PoatrgesqlDomainOutboxRepository(NpgsqlConnection connection)
     public async ValueTask<DomainEventOutbox[]> GetDomainEventsToSentAsync(int limit, CancellationToken cancellationToken)
     {
         var cmd = connection.CreateCommand();
-        cmd.CommandText = SelectEventsQuery;
+        cmd.CommandText = _selectEventsQuery;
         cmd.Parameters.AddWithValue("@limit", limit);
         await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
         var events = new List<DomainEventOutbox>();
@@ -49,7 +49,7 @@ public class PoatrgesqlDomainOutboxRepository(NpgsqlConnection connection)
         var parameters = eventsIds.Select((id, i) => new NpgsqlParameter($"@id{i}", id)).ToArray();
         var inClause = string.Join(", ", parameters.Select(p => p.ParameterName));
         var cmd = connection.CreateCommand();
-        cmd.CommandText = UpdateEventsProcessedAtCommand.Replace("@inClause", inClause);
+        cmd.CommandText = _updateEventsProcessedAtCommand.Replace("@inClause", inClause);
         cmd.Parameters.AddRange(parameters);
         cmd.Parameters.AddWithValue("@ProcessedAt", processedAt.DateTime);
         await cmd.ExecuteNonQueryAsync(cancellation);

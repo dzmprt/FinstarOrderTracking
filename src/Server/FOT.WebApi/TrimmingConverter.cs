@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace FOSDIA.Registration.Api.Utils;
+namespace FOT.WebApi;
 
 /// <summary>
 /// Trim leading and trailing whitespace.

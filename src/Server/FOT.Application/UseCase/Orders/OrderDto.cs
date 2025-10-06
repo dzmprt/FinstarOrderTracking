@@ -4,39 +4,30 @@ using FOT.Domain.Orders.Enums;
 
 namespace FOT.Application.UseCase.Orders;
 
-public class OrderDto
+public class OrderDto(Order order)
 {
     /// <summary>
     /// Order number.
     /// </summary>
-    public Guid OrderNumber { get; set; }
-    
+    public Guid OrderNumber { get; set; } = order.OrderNumber;
+
     /// <summary>
     /// Description.
     /// </summary>
-    public string Description { get; init; }
-    
+    public string Description { get; init; } = order.Description;
+
     /// <summary>
     /// Status.
     /// </summary>
-    public OrderStatusEnum Status { get; init; }
-    
+    public OrderStatus Status { get; init; } = order.Status;
+
     /// <summary>
     /// Created date.
     /// </summary>
-    public DateTime CreatedAt { get; init; }
-    
+    public DateTime CreatedAt { get; init; } = order.CreatedAt;
+
     /// <summary>
     /// Las update date.
     /// </summary>
-    public DateTime? UpdatedAt { get; init; }
-
-    public OrderDto(Order order)
-    {
-        OrderNumber = order.OrderNumber;
-        Description = order.Description;
-        Status = order.Status;
-        CreatedAt = order.CreatedAt;
-        UpdatedAt = order.UpdatedAt;
-    }
+    public DateTime? UpdatedAt { get; init; } = order.UpdatedAt;
 }

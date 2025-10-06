@@ -1,4 +1,4 @@
-using FOT.Application.Abstractions;
+using FOT.Application.Common.Abstractions.Infrastructure.Database;
 using FOT.Application.Common.Exceptions;
 using FOT.Application.Common.Extensions;
 using FOT.Domain.Orders;

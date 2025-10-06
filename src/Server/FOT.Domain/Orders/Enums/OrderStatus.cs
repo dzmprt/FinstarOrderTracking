@@ -3,7 +3,7 @@ namespace FOT.Domain.Orders.Enums;
 /// <summary>
 /// Order status.
 /// </summary>
-public enum OrderStatusEnum
+public enum OrderStatus
 {
     Created = 1,
     Shipped = 2,

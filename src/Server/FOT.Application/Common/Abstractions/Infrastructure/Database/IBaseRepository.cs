@@ -1,4 +1,4 @@
-namespace FOT.Application.Abstractions;
+namespace FOT.Application.Common.Abstractions.Infrastructure.Database;
 
 /// <summary>
 /// Base entity repository.

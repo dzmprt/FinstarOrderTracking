@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace FOT.WebApi;
+namespace FOT.WebApi.Extensions;
 
 internal static class WebApplicationExtensions
 {

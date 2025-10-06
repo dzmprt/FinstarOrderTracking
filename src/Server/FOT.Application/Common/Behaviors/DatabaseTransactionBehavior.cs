@@ -1,4 +1,4 @@
-using FOT.Application.Common.Abstractions.Persistence;
+using FOT.Application.Common.Abstractions.Infrastructure.Database;
 using MitMediator;
 
 namespace FOT.Application.Common.Behaviors;

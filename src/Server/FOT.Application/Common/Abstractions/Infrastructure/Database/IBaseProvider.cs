@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace FOT.Application.Abstractions;
+namespace FOT.Application.Common.Abstractions.Infrastructure.Database;
 
 /// <summary>
 /// Base provider.

@@ -16,4 +16,8 @@
       <ProjectReference Include="..\..\FOT.Application\FOT.Application.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="FOT.DatabaseInfrastructure.Tests" />
+    </ItemGroup>
+
 </Project>

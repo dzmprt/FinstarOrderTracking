@@ -48,7 +48,7 @@ else
 
 
 app.UseCustomExceptionsHandler()
-    .UseConfiguredSwaggerUI()
+    .UseConfiguredSwaggerUi()
     .UseReplayProtection();
 
 if (!useInMemorySqlLite)
@@ -60,3 +60,13 @@ app.RegisterAppInfoEndpoints()
     .UseOrdersApi();
 
 app.Run();
+
+// For tests project.
+namespace FOT.WebApi
+{
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+    public partial class Program
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+    {
+    }
+}

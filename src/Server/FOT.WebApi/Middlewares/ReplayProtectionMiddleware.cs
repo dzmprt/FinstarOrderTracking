@@ -2,23 +2,16 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace FOT.WebApi.Middlewares;
 
-public class ReplayProtectionMiddleware
+/// <summary>
+/// Replay protection middleware (idempotency key)
+/// </summary>
+/// <param name="next"></param>
+/// <param name="cache"></param>
+public class ReplayProtectionMiddleware(RequestDelegate next, IMemoryCache cache)
 {
-    private readonly RequestDelegate _next;
-    private readonly IMemoryCache _cache;
-    private const string HeaderName = "Replay-Nonce";
+    private const string _headerName = "Replay-Nonce";
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="next"></param>
-    /// <param name="cache"></param>
-    public ReplayProtectionMiddleware(RequestDelegate next, IMemoryCache cache)
-    {
-        _next = next;
-        _cache = cache;
-    }
-
+    /// <inheritdoc />
     public async Task InvokeAsync(HttpContext context)
     {
         var method = context.Request.Method;
@@ -27,25 +20,25 @@ public class ReplayProtectionMiddleware
             method != HttpMethods.Put &&
             method != HttpMethods.Patch)
         {
-            await _next(context);
-            return;
-        }
-        
-        if (!context.Request.Headers.TryGetValue(HeaderName, out var nonce))
-        {
-            Console.WriteLine("Replay-Nonce header missing");
-            await _next(context);
+            await next(context);
             return;
         }
 
-        if (_cache.TryGetValue(nonce.ToString(), out _))
+        if (!context.Request.Headers.TryGetValue(_headerName, out var nonce))
+        {
+            Console.WriteLine("Replay-Nonce header missing");
+            await next(context);
+            return;
+        }
+
+        if (cache.TryGetValue(nonce.ToString(), out _))
         {
             context.Response.StatusCode = StatusCodes.Status409Conflict;
             await context.Response.WriteAsync("Request already received");
             return;
         }
 
-        _cache.Set(nonce.ToString(), true, TimeSpan.FromHours(1));
-        await _next(context);
+        cache.Set(nonce.ToString(), true, TimeSpan.FromHours(1));
+        await next(context);
     }
 }

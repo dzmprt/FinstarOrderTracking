@@ -1,8 +1,13 @@
+using System.Reflection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Reflection;
 
-public class NonNullableSchemaFilter : ISchemaFilter
+namespace FOT.WebApi.SwaggerFilters;
+
+/// <summary>
+/// Filer for set required for all not nullable properties (for js clients)
+/// </summary>
+internal sealed class NonNullableSchemaFilter : ISchemaFilter
 {
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)
     {
@@ -13,13 +18,10 @@ public class NonNullableSchemaFilter : ISchemaFilter
 
         foreach (var property in schema.Properties)
         {
-            // Find the corresponding C# property
             var cSharpProperty = context.Type.GetProperty(property.Key, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
 
             if (cSharpProperty != null)
             {
-                // Check if the C# property is a non-nullable value type or a non-nullable reference type
-                // (requires nullable reference types to be enabled in your project)
                 var isNonNullable = cSharpProperty.PropertyType.IsValueType && Nullable.GetUnderlyingType(cSharpProperty.PropertyType) == null ||
                                     (cSharpProperty.PropertyType.IsClass && cSharpProperty.CustomAttributes.All(a => a.AttributeType.Name != "NullableAttribute")); // Heuristic for NRT
 

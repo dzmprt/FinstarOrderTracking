@@ -1,6 +1,6 @@
 namespace FOT.Domain.Common.Extensions;
 
-public static class StringExtensions
+internal static class StringExtensions
 {
     public static void ThrowIfLengthOutOfRange(this string str, int min, int max)
     {

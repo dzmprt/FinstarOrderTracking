@@ -6,22 +6,22 @@ namespace FOT.Domain.Orders.Events;
 /// <summary>
 /// Order status changed event.
 /// </summary>
-public class OrderStatusChangedEvent : BaseDomainEvent
+public sealed class OrderStatusChangedEvent : BaseDomainEvent
 {
     /// <summary>
     /// Order number.
     /// </summary>
     public Guid OrderNumber { get; }
-    
+
     /// <summary>
     /// Status.
     /// </summary>
-    public OrderStatusEnum NewStatus { get; private set; }
-    
+    public OrderStatus NewStatus { get; private set; }
+
     /// <summary>
     /// Las update date.
     /// </summary>
-    public DateTime UpdatedAt { get; protected set; }
+    public DateTime UpdatedAt { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OrderStatusChangedEvent"/>.

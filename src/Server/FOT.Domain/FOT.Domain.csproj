@@ -13,4 +13,8 @@
       </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="FOT.Domain.Tests" />
+    </ItemGroup>
+
 </Project>
