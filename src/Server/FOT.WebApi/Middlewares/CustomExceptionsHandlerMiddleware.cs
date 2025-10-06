@@ -1,6 +1,7 @@
 using System.Net;
 using FluentValidation;
 using FOT.Application.Common.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace FOT.WebApi.Middlewares;
 
@@ -66,6 +67,10 @@ internal class CustomExceptionsHandlerMiddleware
             case NotFoundException notFound:
                 code = HttpStatusCode.NotFound;
                 result = System.Text.Json.JsonSerializer.Serialize(notFound.Message);
+                break;
+            case DbUpdateConcurrencyException dbUpdateConcurrencyException:
+                code = HttpStatusCode.Conflict;
+                result = System.Text.Json.JsonSerializer.Serialize(dbUpdateConcurrencyException.Message);
                 break;
             default:
                 return false;

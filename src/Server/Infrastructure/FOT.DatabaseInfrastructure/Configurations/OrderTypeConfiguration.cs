@@ -13,6 +13,14 @@ public class OrderTypeConfiguration : IEntityTypeConfiguration<Order>
     public void Configure(EntityTypeBuilder<Order> builder)
     {
         builder.HasKey(e => e.OrderNumber);
-        builder.Property(e => e.Description).IsRequired().HasMaxLength(Order.MaxDescriptionLength);
+        
+        builder.Property(e => e.Description)
+            .IsRequired()
+            .HasMaxLength(Order.MaxDescriptionLength);
+
+        builder.Property(e => e.UpdatedAt)
+            .IsConcurrencyToken();
+        
+        builder.HasIndex(e => e.UpdatedAt);
     }
 }
