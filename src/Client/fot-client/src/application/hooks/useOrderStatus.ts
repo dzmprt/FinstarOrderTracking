@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react';
 import { getNextStatusOptions, isValidStatusTransition } from '../utils/statusUtils';
 import type { StatusOption } from '../types/ui';
 
+/**
+ * Custom hook for managing order status transitions and options.
+ * @param currentStatus - Current order status code
+ */
 export function useOrderStatus(currentStatus: number) {
   const [status, setStatus] = useState<string>('');
   const [statusOptions, setStatusOptions] = useState<StatusOption[]>([]);

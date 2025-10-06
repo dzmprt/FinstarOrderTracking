@@ -3,6 +3,9 @@ import { useAppSelector, useAppDispatch } from '../../application/hooks';
 import { removeNotification } from '../../application/websocket/websocketSlice';
 import { WEBSOCKET_CONFIG } from '../../application/constants/websocket';
 
+/**
+ * Displays global toast notifications for order status changes.
+ */
 export const GlobalToast: React.FC = () => {
   const dispatch = useAppDispatch();
   const { notifications } = useAppSelector(s => s.websocket);
@@ -27,7 +30,7 @@ export const GlobalToast: React.FC = () => {
   }
 
   return (
-    <div className="toast-container position-fixed top-0 end-0 p-3" style={{ zIndex: 1055 }}>
+    <div className="toast-container position-fixed top-0 end-0 p-3" style={{ zIndex: 1055 }} aria-live="polite" aria-atomic="true">
       {notifications.map((notification, index) => (
         <div 
           key={notification.id}
@@ -45,6 +48,7 @@ export const GlobalToast: React.FC = () => {
             <button 
               type="button" 
               className="btn-close" 
+              aria-label="Dismiss notification"
               onClick={() => handleDismiss(notification.id)}
             ></button>
           </div>

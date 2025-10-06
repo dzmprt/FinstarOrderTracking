@@ -12,12 +12,13 @@ import { websocketService } from './application/websocket/websocketService';
 import { useEffect } from 'react';
 import { CreateOrder } from './ui/pages/CreateOrder';
 
+/**
+ * Main application component for Finstar Order Tracking client.
+ * Handles routing, global state, and WebSocket lifecycle.
+ */
 const App: React.FC = () => {
   useEffect(() => {
-    // Start WebSocket connection when app loads
     websocketService.connect();
-    
-    // Cleanup on unmount
     return () => {
       websocketService.disconnect();
     };

@@ -1,15 +1,20 @@
+
 export const About: React.FC = () => (
   <div className="container my-4">
     <div className="card shadow-sm border-0">
       <div className="card-body">
-        <h1 className="h4 mb-3">About Finstar Order Tracking</h1>
+        <h1 className="h4 mb-3">Finstar Order Tracking</h1>
         <p className="mb-2">
-          This project is a test assignment for the Finstar company.<br/>
-          <a href="https://github.com/dzmprt/FinstarOrderTracking"><h2>Project GitHub page</h2></a>
+          <strong>Professional fullstack order tracking system for Finstar.</strong>
         </p>
-        <p className="mb-0">
-          <h4>Features</h4>
-          <ul>
+        <p>
+          <a href="https://github.com/dzmprt/FinstarOrderTracking" target="_blank" rel="noopener noreferrer" className="fw-bold">
+            Project GitHub Repository
+          </a>
+        </p>
+        <section aria-labelledby="features-heading">
+          <h2 id="features-heading" className="h5 mt-4 mb-2">Key Features</h2>
+          <ul className="mb-3">
             <li>Order management: create, update, view, and filter orders</li>
             <li>Real-time order status updates via WebSocket</li>
             <li>RESTful API (ASP.NET Core WebApi)</li>
@@ -20,7 +25,7 @@ export const About: React.FC = () => (
             <li>Nginx reverse proxy for unified API and frontend access</li>
             <li>Bootstrap UI for modern frontend design</li>
           </ul>
-        </p>
+        </section>
       </div>
     </div>
   </div>

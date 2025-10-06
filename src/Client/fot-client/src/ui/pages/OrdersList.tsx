@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../application/hooks';
-import { fetchOrders, setQuery, createOrder } from '../../application/order/ordersSlice';
-import { Link, useSearchParams } from 'react-router-dom';
+import { fetchOrders, createOrder, setQuery } from '../../application/order/ordersSlice';
+import { useSearchParams } from 'react-router-dom';
 import { ApiV1OrdersGetOrderByEnum } from '../../application/api-client';
 import { useDebounce } from '../../application/hooks/useDebounce';
-import { StatusBadge } from '../components/StatusBadge';
-import { DateTimeDisplay } from '../components/DateTimeDisplay';
+import { OrdersFilter } from '../components/OrdersFilter';
+import { OrdersTable } from '../components/OrdersTable';
+import { Pagination } from '../components/Pagination';
 
 export const OrdersList: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -34,7 +35,7 @@ export const OrdersList: React.FC = () => {
     const [search, setSearch] = useState(params.get('q') ?? '');
     const debounced = useDebounce(search);
     const [status, setStatus] = useState<string>(params.get('status') ?? '');
-    const [sortBy, setSortBy] = useState<ApiV1OrdersGetOrderByEnum>(params.get('sort') ?  Number(params.get('sort')) as ApiV1OrdersGetOrderByEnum : ApiV1OrdersGetOrderByEnum.NUMBER_1);
+    const [sortBy, setSortBy] = useState<ApiV1OrdersGetOrderByEnum>(params.get('sort') ? Number(params.get('sort')) as ApiV1OrdersGetOrderByEnum : ApiV1OrdersGetOrderByEnum.NUMBER_1);
     const [limit, setLimit] = useState<number>(Number(params.get('limit') ?? '10'));
     const [page, setPage] = useState<number>(Number(params.get('page') ?? '1'));
 
@@ -83,90 +84,19 @@ export const OrdersList: React.FC = () => {
                 </form>
             </div>
             <div className="d-flex flex-column flex-lg-row gap-3">
-                <aside className="filters-sidebar flex-shrink-0">
-                    <div className="card border-0 shadow-sm">
-                        <div className="card-body">
-                            <div className="mb-3">
-                                <label className="form-label">Search</label>
-                                <input className="form-control" placeholder="Search..." value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} />
-                            </div>
-                            <div className="mb-3">
-                                <label className="form-label">Status</label>
-                                <select multiple className="form-select" value={status ? status.split(',') : []} onChange={e => {
-                                    const arr = Array.from(e.target.selectedOptions).map(o => o.value);
-                                    setStatus(arr.join(',')); setPage(1);
-                                }}>
-                                    <option value="1">Created</option>
-                                    <option value="2">Shipped</option>
-                                    <option value="3">Delivered</option>
-                                    <option value="4">Cancelled</option>
-                                </select>
-                                <div className="form-text">Cmd/Ctrl for multiple selection</div>
-                            </div>
-                            <div className="mb-3">
-                                <label className="form-label">Sort</label>
-                                <select className="form-select" value={sortBy} onChange={e => { setSortBy(Number(e.target.value) as ApiV1OrdersGetOrderByEnum); }}>
-                                    <option value="1">By number</option>
-                                    <option value="2">By status</option>
-                                    <option value="3">By created at</option>
-                                    <option value="4">By updated at</option>
-                                </select>
-                            </div>
-                            <div className="mb-2">
-                                <label className="form-label">Page size</label>
-                                <select className="form-select" value={String(limit)} onChange={e => { setLimit(Number(e.target.value)); setPage(1); }}>
-                                    <option value="5">5</option>
-                                    <option value="10">10</option>
-                                    <option value="20">20</option>
-                                    <option value="50">50</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </aside>
+                <OrdersFilter
+                    search={search}
+                    setSearch={setSearch}
+                    status={status}
+                    setStatus={setStatus}
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
+                    limit={limit}
+                    setLimit={setLimit}
+                />
                 <section className="flex-grow-1">
-                    <div className="table-responsive">
-                        <table className="table table-hover align-middle">
-                            <thead className="table-light">
-                                <tr>
-                                    <th>Order #</th>
-                                    <th>Description</th>
-                                    <th>Status</th>
-                                    <th>Created</th>
-                                    <th>Updated</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {items.map(o => (
-                                    <tr key={o.orderNumber}>
-                                        <td><Link to={`/orders/${o.orderNumber}`}>{o.orderNumber}</Link></td>
-                                        <td className="text-truncate" style={{ maxWidth: '32ch' }}>{o.description}</td>
-                                        <td>
-                                            <StatusBadge status={o.status} />
-                                        </td>
-                                        <td><DateTimeDisplay dateString={o.createdAt} /></td>
-                                        <td><DateTimeDisplay dateString={o.updatedAt || ''} /></td>
-                                    </tr>
-                                ))}
-                                {items.length === 0 && (
-                                    <tr>
-                                        <td colSpan={5}>{isLoading ? 'Loading...' : 'No orders found'}</td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                    <nav className="d-flex justify-content-between align-items-center" aria-label="Pagination">
-                        <ul className="pagination mb-0">
-                            <li className={`page-item ${!canPrev ? 'disabled' : ''}`}>
-                                <button className="page-link" onClick={() => setPage(p => Math.max(1, p - 1))}>Prev</button>
-                            </li>
-                            <li className="page-item disabled"><span className="page-link">Page {page}</span></li>
-                            <li className={`page-item ${!canNext ? 'disabled' : ''}`}>
-                                <button className="page-link" onClick={() => setPage(p => p + 1)}>Next</button>
-                            </li>
-                        </ul>
-                    </nav>
+                    <OrdersTable items={items} isLoading={isLoading} />
+                    <Pagination page={page} canPrev={canPrev} canNext={canNext} setPage={setPage} />
                 </section>
             </div>
         </div>

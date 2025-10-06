@@ -1,5 +1,12 @@
 import { formatDateTime } from '../../application/utils/dateUtils';
 
+
+/**
+ * Displays a formatted date/time string.
+ * @param dateString - ISO date string
+ * @param fallback - Fallback text if date is missing
+ * @param className - Additional CSS classes
+ */
 interface DateTimeDisplayProps {
   dateString: string;
   fallback?: string;
@@ -12,8 +19,7 @@ export const DateTimeDisplay: React.FC<DateTimeDisplayProps> = ({
   className = '' 
 }) => {
   if (!dateString) {
-    return <span className={className}>{fallback}</span>;
+    return <span className={className} aria-label="No date">{fallback}</span>;
   }
-
-  return <span className={className}>{formatDateTime(dateString)}</span>;
+  return <span className={className} aria-label={formatDateTime(dateString)}>{formatDateTime(dateString)}</span>;
 };

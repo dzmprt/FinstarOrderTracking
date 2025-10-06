@@ -25,6 +25,10 @@ export interface OrdersState {
     isUpdating?: boolean;
 }
 
+
+/**
+ * Initial state for orders slice.
+ */
 const initialState: OrdersState = {
     items: [],
     isLoading: false,
@@ -97,11 +101,11 @@ export const updateOrderStatus = createAsyncThunk<
 );
 
 export const createOrder = createAsyncThunk(
-  'orders/createOrder',
-  async ({ description }: { description: string }) => {
-    const response = await api.apiV1OrdersPost({ description });
-    return response.data;
-  }
+    'orders/createOrder',
+    async ({ description }: { description: string }) => {
+        const response = await api.apiV1OrdersPost({ description });
+        return response.data;
+    }
 );
 
 // Sorting is performed server-side via orderBy param
@@ -109,60 +113,69 @@ export const createOrder = createAsyncThunk(
 const ordersSlice = createSlice({
     name: 'orders',
     initialState,
-    reducers: {
-        setQuery(state, action: PayloadAction<Partial<OrdersQuery>>) {
-            state.lastQuery = { ...state.lastQuery, ...action.payload } as OrdersQuery;
+        reducers: {
+            setQuery(state, action: PayloadAction<Partial<OrdersQuery>>) {
+                state.lastQuery = { ...state.lastQuery, ...action.payload } as OrdersQuery;
+            },
+            clearSelected(state) {
+                state.selected = undefined;
+            },
         },
-        clearSelected(state) {
-            state.selected = undefined;
+        extraReducers: (builder) => {
+            builder
+                .addCase(fetchOrders.pending, (state) => {
+                    state.isLoading = true;
+                    state.error = undefined;
+                })
+                .addCase(fetchOrders.fulfilled, (state, action) => {
+                    state.isLoading = false;
+                    state.items = action.payload.data;
+                    state.lastQuery = action.payload.query;
+                    state.totalKnown = action.payload.data.length < (state.lastQuery.limit ?? 10);
+                })
+                .addCase(fetchOrders.rejected, (state, action) => {
+                    state.isLoading = false;
+                    state.error = action.error.message;
+                })
+                .addCase(fetchOrderByNumber.pending, (state) => {
+                    state.isLoading = true;
+                    state.selected = undefined;
+                })
+                .addCase(fetchOrderByNumber.fulfilled, (state, action) => {
+                    state.isLoading = false;
+                    state.selected = action.payload;
+                })
+                .addCase(fetchOrderByNumber.rejected, (state, action) => {
+                    state.isLoading = false;
+                    state.selected = undefined;
+                    state.error = action.error.message;
+                })
+                .addCase(updateOrderStatus.pending, (state) => {
+                    state.isUpdating = true;
+                    state.updateError = undefined;
+                })
+                .addCase(updateOrderStatus.fulfilled, (state, action) => {
+                    state.isUpdating = false;
+                    state.selected = action.payload;
+                })
+                .addCase(updateOrderStatus.rejected, (state, action) => {
+                    state.isUpdating = false;
+                    state.updateError = action.payload as string ?? action.error.message;
+                })
+                .addCase(createOrder.pending, (state) => {
+                    state.isLoading = true;
+                    state.error = undefined;
+                })
+                .addCase(createOrder.fulfilled, (state, action) => {
+                    state.isLoading = false;
+                    state.items.unshift(action.payload);
+                })
+                .addCase(createOrder.rejected, (state, action) => {
+                    state.isLoading = false;
+                    state.error = action.error.message;
+                });
         },
-    },
-    extraReducers: (builder) => {
-        builder
-            .addCase(fetchOrders.pending, (state, action) => {
-                state.isLoading = true;
-                state.error = undefined;
-                const query = action.meta.arg;
-                state.lastQuery = { ...state.lastQuery, ...query } as OrdersQuery;
-            })
-            .addCase(fetchOrders.fulfilled, (state, action) => {
-                state.isLoading = false;
-                const { data, query } = action.payload;
-                state.items = data;
-                state.totalKnown = data.length < query.limit;
-            })
-            .addCase(fetchOrders.rejected, (state, action) => {
-                state.isLoading = false;
-                state.error = action.error.message || 'Failed to load orders';
-            })
-            .addCase(fetchOrderByNumber.pending, (state) => {
-                state.isLoading = true;
-                state.error = undefined;
-            })
-            .addCase(fetchOrderByNumber.fulfilled, (state, action) => {
-                state.isLoading = false;
-                state.selected = action.payload;
-            })
-            .addCase(fetchOrderByNumber.rejected, (state, action) => {
-                state.isLoading = false;
-                state.error = action.error.message || 'Failed to load order';
-            })
-            .addCase(updateOrderStatus.pending, (state) => {
-                state.updateError = undefined;
-                state.isUpdating = true;
-            })
-            .addCase(updateOrderStatus.fulfilled, (state, action) => {
-                state.selected = action.payload;
-                const index = state.items.findIndex(o => o.orderNumber === action.payload.orderNumber);
-                if (index >= 0) state.items[index] = action.payload;
-                state.isUpdating = false;
-            })
-            .addCase(updateOrderStatus.rejected, (state, action) => {
-                state.updateError = (action.payload as string) || action.error.message || 'Не удалось обновить статус';
-                state.isUpdating = false;
-            });
-    },
-});
+    });
 
 export const { setQuery, clearSelected } = ordersSlice.actions;
 export default ordersSlice.reducer;

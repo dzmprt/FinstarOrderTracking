@@ -23,6 +23,11 @@ const initialState: WebSocketState = {
   notifications: [],
 };
 
+
+/**
+ * WebSocket slice for Redux Toolkit.
+ * Handles connection status, errors, order status events, and notifications.
+ */
 const websocketSlice = createSlice({
   name: 'websocket',
   initialState,
@@ -42,7 +47,6 @@ const websocketSlice = createSlice({
         receivedAt: new Date().toISOString(),
       };
       state.orders.unshift(webSocketOrder);
-      
       // Add notification with unique ID
       const notificationId = `${action.payload.orderNumber}-${Date.now()}`;
       state.notifications.push({
