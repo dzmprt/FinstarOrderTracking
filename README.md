@@ -1,5 +1,8 @@
 # Finstar Order Tracking
 
+[![build and test](https://github.com/dzmprt/MitMediator/actions/workflows/dotnet.yml/badge.svg)](https://github.com/dzmprt/FinstarOrderTracking)
+![.NET 8.0](https://img.shields.io/badge/Version-.NET%208.0-informational?style=flat&logo=dotnet)
+
 **This project is a test assignment for the Finstar company.**
 
 ![Image of project](assets/projimg.png)
@@ -38,13 +41,7 @@ docker compose up -d --build
   - jdbc:postgresql://localhost:5432/fot.webapi?password=12345678&user=FotWebapi
   - "Server=localhost;Port=5432;Database=fot.webapi;User Id=FotWebapi;Password=12345678;"
 
-## [License](./LICENSE)
-
-## Author
-
-### [Dmitry Protko](https://github.com/dzmprt)
-
-### Functional Requirements
+## Functional Requirements
 
 #### Backend (.NET 8, ASP.NET Core):
 
@@ -90,8 +87,10 @@ docker compose up -d --build
 ## Original Assignment (Russian)
 
 > ТЗ №2 — Fullstack-разработчик
+> 
 > Задание 1
-> Цель задания:
+> 
+>Цель задания:
 > Реализация веб-приложения для отслеживания статуса заказов (Order Tracking Application).
 >
 > Функциональные требования:
@@ -133,6 +132,11 @@ docker compose up -d --build
 
 ---
 
+## System design
+
+![Image of project](assets/fot_sys_design.png)
+
+
 ## Project Architecture
 
 ### Backend
@@ -147,16 +151,16 @@ docker compose up -d --build
 - **Background services** for outbox pattern and WebSocket notifications
 - **Logging** (console/file)
 - **Docker** for containerization
-- **OpenTelemetry** (optional, for tracing)
 - **Microsoft.Extensions.Caching.Memory**
+- **xUnit**
 
 ### Frontend
 
 - **React** (TypeScript)
 - **Redux Toolkit** (state management)
-- **Bootsrtap** (UI components)
+- **Bootsrtap** (UI)
 - **Vite** (build tool)
-- **WebSocket** (real-time updates)
+- **WebSocket**
 - **Docker** for containerization
 
 ### Infrastructure
@@ -183,7 +187,7 @@ docker compose up -d --build
 ## Features
 
 - Order management: create, update, view, and filter orders
-- Real-time order status updates via WebSocket (Kafka integration)
+- Real-time order status updates via WebSocket
 - RESTful API (ASP.NET Core WebApi)
 - PostgreSQL database
 - Kafka for event-driven architecture
@@ -192,5 +196,8 @@ docker compose up -d --build
 - Nginx reverse proxy for unified API and frontend access
 - Bootstrap UI for modern frontend design
 
+### [License](./LICENSE)
+
+### Author [Dmitry Protko](https://github.com/dzmprt)
 
 

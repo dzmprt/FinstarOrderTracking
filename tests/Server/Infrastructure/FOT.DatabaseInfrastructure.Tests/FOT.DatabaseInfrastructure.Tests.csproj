@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\src\Server\Infrastructure\FOT.DatabaseInfrastructure\FOT.DatabaseInfrastructure.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Server\Infrastructure\FOT.DatabaseInfrastructure\FOT.DatabaseInfrastructure.csproj" />
     </ItemGroup>
 
 </Project>

@@ -37,9 +37,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FOT.Application.Tests", "te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FOT.WebApi.Tests", "tests\Server\FOT.WebApi.Tests\FOT.WebApi.Tests.csproj", "{F69711BD-29AB-4DFD-9E24-C07628FAEFDD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{133685F8-04AE-45EE-BE20-70FE2E878CB4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FOT.DatabaseInfrastructure.Tests", "FOT.DatabaseInfrastructure.Tests\FOT.DatabaseInfrastructure.Tests.csproj", "{262101DC-F8F2-44B2-A395-CD8DC06AD27F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FOT.DatabaseInfrastructure.Tests", "tests\Server\Infrastructure\FOT.DatabaseInfrastructure.Tests\FOT.DatabaseInfrastructure.Tests.csproj", "{DDBB38E8-F0CC-4B15-9DF3-67C4662AA544}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,8 +59,6 @@ Global
 		{F528A02A-4D86-45EA-8012-CAB828153F11} = {7B64AECD-B91F-4281-A717-900A2B1E9547}
 		{ED5ECA4A-CD24-48EB-9E3C-E7919C64ECFA} = {7B64AECD-B91F-4281-A717-900A2B1E9547}
 		{F69711BD-29AB-4DFD-9E24-C07628FAEFDD} = {7B64AECD-B91F-4281-A717-900A2B1E9547}
-		{133685F8-04AE-45EE-BE20-70FE2E878CB4} = {7B64AECD-B91F-4281-A717-900A2B1E9547}
-		{262101DC-F8F2-44B2-A395-CD8DC06AD27F} = {133685F8-04AE-45EE-BE20-70FE2E878CB4}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5771722B-69B5-4F84-8C36-8F95132B0158}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -105,5 +101,9 @@ Global
 		{262101DC-F8F2-44B2-A395-CD8DC06AD27F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{262101DC-F8F2-44B2-A395-CD8DC06AD27F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{262101DC-F8F2-44B2-A395-CD8DC06AD27F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDBB38E8-F0CC-4B15-9DF3-67C4662AA544}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDBB38E8-F0CC-4B15-9DF3-67C4662AA544}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDBB38E8-F0CC-4B15-9DF3-67C4662AA544}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDBB38E8-F0CC-4B15-9DF3-67C4662AA544}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
