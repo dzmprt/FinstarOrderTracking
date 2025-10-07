@@ -18,6 +18,7 @@ var useInMemorySqlLite = builder.Configuration.GetValue<bool>("UseInMemorySqlLit
 builder.Host.UseSerilog();
 builder.Services
     .AddAspNetServices(builder.Configuration)
+    .AddAndConfigureOpenTelemetry(builder.Configuration)
     .AddApplicationServices()
     .AddDatabaseServices(
         useInMemorySqlLite
@@ -34,6 +35,7 @@ builder.Services
             : options => { options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")); }
     )
     .AddMemoryCache();
+
 
 var app = builder.Build();
 

@@ -2,9 +2,10 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using FOT.WebApi.SwaggerFilters;
 using Microsoft.AspNetCore.Http.Json;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Npgsql;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 namespace FOT.WebApi;
 
@@ -36,6 +37,37 @@ public static class DependencyInjection
                 configuration["AppInfo:Version"]!,
                 configuration["AppInfo:Description"]!)
             .AddDevCors();
+        return services;
+    }
+
+    /// <summary>
+    /// Add and configure open telemetry.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddAndConfigureOpenTelemetry(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddOpenTelemetry()
+            .ConfigureResource(resource => resource
+                .AddService(serviceName: configuration["AppInfo:AppName"] ?? "FOT.WebApi",
+                    serviceVersion: configuration["AppInfo:Version"]))
+            .WithTracing(tracerProviderBuilder => tracerProviderBuilder
+                .AddAspNetCoreInstrumentation(options =>
+                {
+                    options.RecordException = true;
+                    options.Filter = httpContext => true;
+                })
+                .AddHttpClientInstrumentation()
+                .AddNpgsql()
+                .AddEntityFrameworkCoreInstrumentation(options =>
+                {
+                    options.SetDbStatementForText = true;
+                    options.SetDbStatementForStoredProcedure = true;
+                })
+                .AddOtlpExporter());
+
         return services;
     }
 

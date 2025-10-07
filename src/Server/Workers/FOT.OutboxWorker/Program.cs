@@ -2,8 +2,18 @@ using Confluent.Kafka;
 using FOT.OutboxWorker;
 using FOT.OutboxWorker.Abstractions;
 using FOT.OutboxWorker.Infrastructure;
+using Npgsql;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 var builder = Host.CreateApplicationBuilder(args);
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource
+        .AddService("FOT.OutboxWorker"))
+    .WithTracing(tp => tp
+        .AddHttpClientInstrumentation()
+        .AddNpgsql()
+        .AddOtlpExporter());
 builder.Services.AddHostedService<Worker>();
 builder.Services.AddSingleton<IProducer<string, string>>(sp =>
 {

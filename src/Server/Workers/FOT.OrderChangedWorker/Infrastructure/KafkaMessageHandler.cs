@@ -1,4 +1,5 @@
 using System.Text.Json;
+using OpenTelemetry.Trace;
 using FOT.OrderChangedWorker.Abstractions;
 using FOT.OrderChangedWorker.Models;
 

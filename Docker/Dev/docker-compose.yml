@@ -1,10 +1,12 @@
 ﻿services:
-
   fot.webapi:
     image: fot.webapi
     build:
       context: ../../
       dockerfile: src/Server/FOT.WebApi/Dockerfile
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+      - OTEL_SERVICE_NAME=fot.webapi
     depends_on:
       fot.webapi.postgres:
         condition: service_healthy
@@ -50,14 +52,14 @@
       POSTGRES_PASSWORD: "12345678"
       PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
-      - ../../AppData/postgresql/data:/var/lib/postgresql/data
+      - ../../AppData/postgresql:/var/lib/postgresql/data/pgdata
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready" ]
+      test: ["CMD-SHELL", "pg_isready"]
       interval: 1s
       timeout: 5s
       retries: 10
     restart: unless-stopped
-    
+
   fot.proxy:
     container_name: fot.proxy
     image: nginx:mainline
@@ -88,6 +90,11 @@
     volumes:
       - ../../AppData/kafka/kraft-combined-logs:/tmp/kraft-combined-logs
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server fot.kafka:9092 --list || exit 1"]
+      interval: 30s
+      retries: 5
+      timeout: 10s
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -104,12 +111,16 @@
     build:
       context: ../../
       dockerfile: src/Server/Workers/FOT.OutboxWorker/Dockerfile
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+      - OTEL_SERVICE_NAME=fot.outboxworker
     depends_on:
       fot.webapi.postgres:
         condition: service_healthy
         restart: true
       fot.kafka:
-        condition: service_started
+        condition: service_healthy
+        restart: true
     restart: unless-stopped
 
   fot.orderchangedworker:
@@ -117,9 +128,13 @@
     build:
       context: ../../
       dockerfile: src/Server/Workers/FOT.OrderChangedWorker/Dockerfile
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+      - OTEL_SERVICE_NAME=fot.orderchangedworker
     depends_on:
       fot.kafka:
-        condition: service_started
+        condition: service_healthy
+        restart: true
     restart: unless-stopped
 
   fot.client:
@@ -129,4 +144,40 @@
       dockerfile: Dockerfile
     environment:
       - NODE_ENV=production
+    restart: unless-stopped
+    depends_on:
+      fot.webapi:
+        condition: service_started
+        restart: true
+      fot.orderchangedworker:
+        condition: service_started
+        restart: true
+
+  otel-collector:
+    image: otel/opentelemetry-collector:0.103.1
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    restart: unless-stopped
+
+  tempo:
+    image: grafana/tempo:2.6.1
+    command: ["-config.file=/etc/tempo.yaml"]
+    volumes:
+      - ./tempo.yaml:/etc/tempo.yaml
+      - ../../AppData/tempo:/var/tempo
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_AUTH_BASIC_ENABLED=false
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - tempo
     restart: unless-stopped

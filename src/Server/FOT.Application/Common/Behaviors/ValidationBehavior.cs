@@ -5,7 +5,7 @@ using MitMediator;
 namespace FOT.Application.Common.Behaviors;
 
 /// <summary>
-/// Request validation pipeline behavior. 
+/// Request validation pipeline behavior.
 /// </summary>
 /// <typeparam name="TRequest">Request type.</typeparam>
 /// <typeparam name="TResponse">Response type.</typeparam>
@@ -34,8 +34,11 @@ internal class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequ
             .Where(f => f != null)
             .ToList();
 
-        if (failures.Count != 0) throw new ValidationException(failures);
+        if (failures.Count != 0)
+        {
+            throw new ValidationException(failures);
+        }
 
-        return await next.InvokeAsync(request, cancellationToken);    
+        return await next.InvokeAsync(request, cancellationToken);
     }
 }

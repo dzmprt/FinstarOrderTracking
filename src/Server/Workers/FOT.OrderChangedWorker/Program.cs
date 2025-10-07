@@ -3,6 +3,8 @@ using Confluent.Kafka;
 using FOT.OrderChangedWorker;
 using FOT.OrderChangedWorker.Abstractions;
 using FOT.OrderChangedWorker.Infrastructure;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,14 @@ builder.Services.Configure<ConsumerConfig>(
     builder.Configuration.GetSection("Kafka"));
 builder.Services.AddSingleton<KafkaConsumerFactory>();
 builder.Services.AddSingleton<KafkaMessageHandler>();
+
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource
+        .AddService("FOT.OrderChangedWorker"))
+    .WithTracing(tp => tp
+        .AddAspNetCoreInstrumentation(options => options.RecordException = true)
+        .AddHttpClientInstrumentation()
+        .AddOtlpExporter());
 
 var app = builder.Build();
 
@@ -32,7 +42,7 @@ app.Map("/orders-statuses", async context =>
         var id = Guid.NewGuid().ToString();
         var manager = context.RequestServices.GetRequiredService<WebSocketConnectionManager>();
         manager.AddSocket(id, socket);
-        
+
         while (socket.State == WebSocketState.Open)
         {
             await Task.Delay(1000);

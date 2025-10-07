@@ -1,6 +1,7 @@
 using Confluent.Kafka;
 using FOT.OutboxWorker.Abstractions;
 using Npgsql;
+using System.Diagnostics;
 
 namespace FOT.OutboxWorker.Infrastructure;
 
@@ -12,6 +13,7 @@ public class KafkaOutboxPublisher(
 {
     public async Task PublishAsync(CancellationToken cancellationToken)
     {
+        using var rootActivity = new ActivitySource("FOT.OutboxWorker").StartActivity("Publish Outbox Events");
         await using var connection = new NpgsqlConnection(config.GetConnectionString("DefaultConnection"));
         await connection.OpenAsync(cancellationToken);
 
@@ -30,6 +32,10 @@ public class KafkaOutboxPublisher(
         {
             foreach (var ev in events)
             {
+                using var evtActivity = new ActivitySource("FOT.OutboxWorker").StartActivity("Kafka Produce");
+                evtActivity?.SetTag("messaging.system", "kafka");
+                evtActivity?.SetTag("messaging.destination", ev.EventCode);
+                evtActivity?.SetTag("message.key", ev.DomainEventOutboxId.ToString());
                 producer.Produce(ev.EventCode, new Message<string, string>
                 {
                     Key = ev.DomainEventOutboxId.ToString(),

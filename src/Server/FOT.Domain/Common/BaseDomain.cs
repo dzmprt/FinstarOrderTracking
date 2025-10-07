@@ -11,7 +11,10 @@ public class BaseDomain
     /// Domain events.
     /// </summary>
     /// <returns></returns>
-    public IReadOnlyCollection<BaseDomainEvent> GetDomainEvents() => _domainEvents.AsReadOnly();
+    public IReadOnlyCollection<BaseDomainEvent> GetDomainEvents()
+    {
+        return _domainEvents.AsReadOnly();
+    }
 
     /// <summary>
     /// Add domain event.
