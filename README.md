@@ -1,9 +1,20 @@
-# Finstar Order Tracking
+# This project is a test assignment for the Finstar company.
+
+### Task 1
+
+Implementation of a web application for tracking the status of orders (Order Tracking Application).
+
+### Task 2
+
+Write a SQL table function that will return daily payment amounts based on a ClientId and a date range (Date type). If there were no payments for a given day, the function should return 0. Date ranges can span multiple years.
+
+[SQL for task 2](task2.sql)
+
+# Task 1: Order Tracking Application
 
 [![build and test](https://github.com/dzmprt/MitMediator/actions/workflows/dotnet.yml/badge.svg)](https://github.com/dzmprt/FinstarOrderTracking)
 ![.NET 8.0](https://img.shields.io/badge/Version-.NET%208.0-informational?style=flat&logo=dotnet)
 
-**This project is a test assignment for the Finstar company.**
 
 ![Image of project](assets/projimg.png)
 
