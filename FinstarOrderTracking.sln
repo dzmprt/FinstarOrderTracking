@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FOT.WebApi.Tests", "tests\S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FOT.DatabaseInfrastructure.Tests", "tests\Server\Infrastructure\FOT.DatabaseInfrastructure.Tests\FOT.DatabaseInfrastructure.Tests.csproj", "{DDBB38E8-F0CC-4B15-9DF3-67C4662AA544}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{DF9FC676-E6F3-4D54-865B-E1F08080AA68}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,8 @@ Global
 		{F528A02A-4D86-45EA-8012-CAB828153F11} = {7B64AECD-B91F-4281-A717-900A2B1E9547}
 		{ED5ECA4A-CD24-48EB-9E3C-E7919C64ECFA} = {7B64AECD-B91F-4281-A717-900A2B1E9547}
 		{F69711BD-29AB-4DFD-9E24-C07628FAEFDD} = {7B64AECD-B91F-4281-A717-900A2B1E9547}
+		{DF9FC676-E6F3-4D54-865B-E1F08080AA68} = {7B64AECD-B91F-4281-A717-900A2B1E9547}
+		{DDBB38E8-F0CC-4B15-9DF3-67C4662AA544} = {DF9FC676-E6F3-4D54-865B-E1F08080AA68}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5771722B-69B5-4F84-8C36-8F95132B0158}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
